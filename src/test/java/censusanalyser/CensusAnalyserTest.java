@@ -7,6 +7,7 @@ import org.junit.rules.ExpectedException;
 public class CensusAnalyserTest {
 
     private static final String INDIA_CENSUS_CSV_FILE_PATH = "./src/test/resources/IndiaStateCensusData.csv";
+    private static final String CENSUS_WITHDIFFERENT_DELIMETER_PATH = "./src/test/resources/IndiaStateCensusDataDiffDelimeter1.csv";
     private static final String WRONG_CSV_FILE_PATH = "./src/main/resources/IndiaStateCensusData.csv";
     private static final String WRONG_EXTENSION_FILE_PATH = "./src/main/resources/IndiaStateCensusData.txt";
 
@@ -40,6 +41,18 @@ public class CensusAnalyserTest {
             censusAnalyser.loadIndiaCensusData(WRONG_EXTENSION_FILE_PATH);
         } catch (CensusAnalyserException e) {
             Assert.assertEquals(CensusAnalyserException.ExceptionType.INVALID_FILE_EXTENSION,e.type);
+        }
+    }
+
+    @Test
+    public void givenIndianCensusData_WithWrongDelimeter_ShouldThrowException() {
+        try {
+            CensusAnalyser censusAnalyser = new CensusAnalyser();
+            ExpectedException exceptionRule = ExpectedException.none();
+            exceptionRule.expect(CensusAnalyserException.class);
+            censusAnalyser.loadIndiaCensusData(CENSUS_WITHDIFFERENT_DELIMETER_PATH);
+        } catch (CensusAnalyserException e) {
+            Assert.assertEquals(CensusAnalyserException.ExceptionType.INVALID_DELIMETER_IN_FILE,e.type);
         }
     }
 }
