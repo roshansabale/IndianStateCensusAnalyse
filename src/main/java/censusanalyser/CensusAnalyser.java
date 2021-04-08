@@ -55,7 +55,7 @@ public class CensusAnalyser {
         return extension;
     }
 
-    public int loadStateCodeData(String filePath) {
+    public int loadStateCodeData(String filePath) throws CensusAnalyserException {
         String extension = findExtenstionTypeOfFile(filePath);
         int numberOfEnteries = 0;
         try {
@@ -71,9 +71,14 @@ public class CensusAnalyser {
                     StateCodeCSV censusData = stateCodeCSVIterator.next();
                 }
                 System.out.println("Number of Entries"+numberOfEnteries);
+            } else {
+                throw new CensusAnalyserException("Invalid extension type of file",CensusAnalyserException.ExceptionType.INVALID_FILE_EXTENSION);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+            throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
+        } catch (RuntimeException e) {
+            throw new CensusAnalyserException("Invalid Header or delimeter",CensusAnalyserException
+                    .ExceptionType.INVALID_DELIMETER_OR_HEADER);
         }
         return numberOfEnteries;
     }
