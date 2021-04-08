@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="censusanalyser.CensusAnalyserTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2021-04-07T18:19:20" hostname="LAPTOP-6I2PIU3U" time="1.686">
+<testsuite name="censusanalyser.CensusAnalyserTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2021-04-08T06:12:02" hostname="LAPTOP-6I2PIU3U" time="0.078">
   <properties/>
-  <testcase name="givenIndianCensusData_WithWrongDelimeter_ShouldThrowException" classname="censusanalyser.CensusAnalyserTest" time="1.686"/>
+  <testcase name="givenIndiaCensusData_WithWrongHeader_ShouldThrowException" classname="censusanalyser.CensusAnalyserTest" time="0.078"/>
   <system-out><![CDATA[File extension is csv
-Delimeter Status: true
+Invalid Header or delimeter
 ]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

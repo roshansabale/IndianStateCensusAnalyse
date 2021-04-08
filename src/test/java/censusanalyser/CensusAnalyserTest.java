@@ -11,14 +11,13 @@ public class CensusAnalyserTest {
     private static final String WRONG_CSV_FILE_PATH = "./src/main/resources/IndiaStateCensusData.csv";
     private static final String WRONG_EXTENSION_FILE_PATH = "./src/main/resources/IndiaStateCensusData.txt";
     private static final String WRONG_FILE_HEADER = "./src/test/resources/IndiaStateCensusDataWrongHeader.csv";
+    private static final String STATE_CODE_DATA_FILE_PATH = "./src/test/resources/IndiaStateCode.csv";
 
     @Test
-    public void givenIndianCensusCSVFileReturnsCorrectRecords() {
-        try {
+    public void givenIndianCensusCSVFileReturnsCorrectRecords() throws CensusAnalyserException {
             CensusAnalyser censusAnalyser = new CensusAnalyser();
             int numOfRecords = censusAnalyser.loadIndiaCensusData(INDIA_CENSUS_CSV_FILE_PATH);
             Assert.assertEquals(29,numOfRecords);
-        } catch (CensusAnalyserException e) { }
     }
 
     @Test
@@ -68,4 +67,12 @@ public class CensusAnalyserTest {
             Assert.assertEquals(CensusAnalyserException.ExceptionType.INVALID_DELIMETER_OR_HEADER,e.type);
         }
     }
+
+    @Test
+    public void givenStateCodeData_ReturnExactRecordCount()  {
+            CensusAnalyser censusAnalyser = new CensusAnalyser();
+            long numOfRecords = censusAnalyser.loadStateCodeData(STATE_CODE_DATA_FILE_PATH);
+            Assert.assertEquals(37, numOfRecords);
+        }
+
 }
