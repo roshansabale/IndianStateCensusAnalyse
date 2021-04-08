@@ -55,9 +55,9 @@ public class CensusAnalyser {
         return extension;
     }
 
-    public long loadStateCodeData(String filePath) {
+    public int loadStateCodeData(String filePath) {
         String extension = findExtenstionTypeOfFile(filePath);
-        long numberOfEnteries = 0;
+        int numberOfEnteries = 0;
         try {
             if (extension.equalsIgnoreCase("csv")) {
                 Reader reader = Files.newBufferedReader(Paths.get(filePath));
@@ -65,8 +65,11 @@ public class CensusAnalyser {
                 csvToBeanBuilder.withType(StateCodeCSV.class);
                 csvToBeanBuilder.withIgnoreLeadingWhiteSpace(true);
                 CsvToBean<StateCodeCSV> csvToBean = csvToBeanBuilder.build();
-                List<StateCodeCSV> stateCodeCSVIterator = csvToBean.parse();
-                numberOfEnteries = stateCodeCSVIterator.stream().count();
+                Iterator<StateCodeCSV> stateCodeCSVIterator = csvToBean.iterator();
+                while (stateCodeCSVIterator.hasNext()) {
+                    numberOfEnteries++;
+                    StateCodeCSV censusData = stateCodeCSVIterator.next();
+                }
                 System.out.println("Number of Entries"+numberOfEnteries);
             }
         } catch (Exception e) {
