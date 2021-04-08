@@ -69,10 +69,57 @@ public class CensusAnalyserTest {
     }
 
     @Test
-    public void givenStateCodeData_ReturnExactRecordCount()  {
+    public void givenStateCodeData_ReturnExactRecordCount() throws CensusAnalyserException {
             CensusAnalyser censusAnalyser = new CensusAnalyser();
             long numOfRecords = censusAnalyser.loadStateCodeData(STATE_CODE_DATA_FILE_PATH);
             Assert.assertEquals(37, numOfRecords);
-        }
+    }
 
+    @Test
+    public void givenStateCodeData_WithWrongFile_ShouldThrowException() {
+        try {
+            CensusAnalyser censusAnalyser = new CensusAnalyser();
+            ExpectedException exceptionRule = ExpectedException.none();
+            exceptionRule.expect(CensusAnalyserException.class);
+            censusAnalyser.loadStateCodeData(WRONG_CSV_FILE_PATH);
+        } catch (CensusAnalyserException e) {
+            Assert.assertEquals(CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM,e.type);
+        }
+    }
+
+    @Test
+    public void givenStateCodeData_WithWrongFileExtension_ShouldThrowException() {
+        try {
+            CensusAnalyser censusAnalyser = new CensusAnalyser();
+            ExpectedException exceptionRule = ExpectedException.none();
+            exceptionRule.expect(CensusAnalyserException.class);
+            censusAnalyser.loadStateCodeData(WRONG_EXTENSION_FILE_PATH);
+        } catch (CensusAnalyserException e) {
+            Assert.assertEquals(CensusAnalyserException.ExceptionType.INVALID_FILE_EXTENSION,e.type);
+        }
+    }
+
+    @Test
+    public void givenStateCodeData_WithWrongDelimeter_ShouldThrowException() {
+        try {
+            CensusAnalyser censusAnalyser = new CensusAnalyser();
+            ExpectedException exceptionRule = ExpectedException.none();
+            exceptionRule.expect(CensusAnalyserException.class);
+            censusAnalyser.loadStateCodeData(CENSUS_WITHDIFFERENT_DELIMETER_PATH);
+        } catch (CensusAnalyserException e) {
+            Assert.assertEquals(CensusAnalyserException.ExceptionType.INVALID_DELIMETER_OR_HEADER,e.type);
+        }
+    }
+
+    @Test
+    public void givenStateCodeData_WithWrongHeader_ShouldThrowException() {
+        try {
+            CensusAnalyser censusAnalyser = new CensusAnalyser();
+            ExpectedException exceptionRule = ExpectedException.none();
+            exceptionRule.expect(CensusAnalyserException.class);
+            censusAnalyser.loadStateCodeData(WRONG_FILE_HEADER);
+        } catch (CensusAnalyserException e) {
+            Assert.assertEquals(CensusAnalyserException.ExceptionType.INVALID_DELIMETER_OR_HEADER,e.type);
+        }
+    }
 }
