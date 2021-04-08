@@ -14,12 +14,9 @@ import java.util.Iterator;
 public class CensusAnalyser {
     public int loadIndiaCensusData(String filePath) throws CensusAnalyserException {
         String extension = findExtenstionTypeOfFile(filePath);
-        boolean delimeterStatus = findDelemeterOfCSVFile(filePath);
-        System.out.println("Delimeter Status: "+delimeterStatus);
 
         int namOfEateries = 0;
         try {
-            if(delimeterStatus==true) {
                 if (extension.equalsIgnoreCase("csv")) {
                     Reader reader = Files.newBufferedReader(Paths.get(filePath));
                     CsvToBeanBuilder<IndiaCensusCSV> csvToBeanBuilder = new CsvToBeanBuilder<>(reader);
@@ -37,15 +34,13 @@ public class CensusAnalyser {
                                                                                             .ExceptionType
                                                                                             .INVALID_FILE_EXTENSION);
                 }
-            } else {
-                throw new CensusAnalyserException("Invalid Delimeter in file",CensusAnalyserException
-                                                                                .ExceptionType
-                                                                                .INVALID_DELIMETER_IN_FILE);
-            }
             return namOfEateries;
         } catch (IOException e) {
             throw new CensusAnalyserException(e.getMessage(),
                     CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
+        } catch (RuntimeException e) {
+            throw new CensusAnalyserException("Invalid Header or delimeter",CensusAnalyserException
+                                                                            .ExceptionType.INVALID_DELIMETER_OR_HEADER);
         }
     }
 
@@ -57,29 +52,5 @@ public class CensusAnalyser {
             System.out.println("File extension is " + extension);
         }
         return extension;
-    }
-
-    public Boolean findDelemeterOfCSVFile(String filePath) {
-        String line = "";
-        String cvsSplitBy = ",";
-        boolean delimeterStatus=false;
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            while ((line = br.readLine()) != null) {
-                // use comma as separator
-                if (line.contains(",")) {
-                    cvsSplitBy = ",";
-                    delimeterStatus = true;
-                } else if (line.contains(";")) {
-                    cvsSplitBy = ";";
-                    delimeterStatus = true;
-                } else {
-                    System.out.println("Wrong separator!");
-                    delimeterStatus = false;
-                }
-               }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return delimeterStatus;
     }
 }
