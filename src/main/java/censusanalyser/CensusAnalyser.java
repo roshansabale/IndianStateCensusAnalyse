@@ -27,6 +27,8 @@ public class CensusAnalyser {
         } catch (RuntimeException e) {
             throw new CensusAnalyserException("Invalid Header or delimeter",CensusAnalyserException
                                                                             .ExceptionType.INVALID_DELIMETER_OR_HEADER);
+        } catch (CSVBuilderException e) {
+            throw new CensusAnalyserException(e.getMessage(),e.type.name());
         }
     }
 
@@ -49,6 +51,8 @@ public class CensusAnalyser {
         } catch (RuntimeException e) {
             throw new CensusAnalyserException("Invalid Header or delimeter",CensusAnalyserException
                                                                                         .ExceptionType.INVALID_DELIMETER_OR_HEADER);
+        } catch (CSVBuilderException e) {
+            throw new CensusAnalyserException(e.getMessage(),e.type.name());
         }
         return numberOfEnteries;
     }
