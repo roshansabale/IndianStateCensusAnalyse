@@ -1,8 +1,4 @@
 package censusanalyser;
-
-import com.opencsv.bean.CsvToBean;
-import com.opencsv.bean.CsvToBeanBuilder;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
@@ -17,7 +13,8 @@ public class CensusAnalyser {
         try {
                 if (extension.equalsIgnoreCase("csv")) {
                     Reader reader = Files.newBufferedReader(Paths.get(filePath));
-                    Iterator<IndiaCensusCSV> indiaCensusCSVIterator = this.getCSVFileIterator(reader,IndiaCensusCSV.class);
+                    Iterator<IndiaCensusCSV> indiaCensusCSVIterator = new OpenCSVBuilder()
+                                                                            .getCSVFileIterator(reader,IndiaCensusCSV.class);
                     numberOfEnteries = this.getCount(indiaCensusCSVIterator);
                 } else {
                     throw new CensusAnalyserException("Invalid Extension type of file", CensusAnalyserException
@@ -33,23 +30,14 @@ public class CensusAnalyser {
         }
     }
 
-    public String findExtenstionTypeOfFile(String pathValue) {
-        int index = pathValue.lastIndexOf('.');
-        String extension = null;
-        if( index > 0) {
-            extension = pathValue.substring(index + 1);
-            System.out.println("File extension is " + extension);
-        }
-        return extension;
-    }
-
     public int loadStateCodeData(String filePath) throws CensusAnalyserException {
         String extension = findExtenstionTypeOfFile(filePath);
         int numberOfEnteries;
         try {
             if (extension.equalsIgnoreCase("csv")) {
                 Reader reader = Files.newBufferedReader(Paths.get(filePath));
-                Iterator<StateCodeCSV> stateCSVIterator = this.getCSVFileIterator(reader,StateCodeCSV.class);
+                Iterator<StateCodeCSV> stateCSVIterator = new OpenCSVBuilder()
+                                                                .getCSVFileIterator(reader,StateCodeCSV.class);
                 numberOfEnteries = this.getCount(stateCSVIterator);
             } else {
                 throw new CensusAnalyserException("Invalid extension type of file",CensusAnalyserException
@@ -64,17 +52,14 @@ public class CensusAnalyser {
         }
         return numberOfEnteries;
     }
-
-    private<E> Iterator<E>  getCSVFileIterator(Reader reader,Class csvClass) throws CensusAnalyserException {
-        try {
-            CsvToBeanBuilder<E> csvToBeanBuilder = new CsvToBeanBuilder<>(reader);
-            csvToBeanBuilder.withType(csvClass);
-            csvToBeanBuilder.withIgnoreLeadingWhiteSpace(true);
-            CsvToBean<E> csvToBean = csvToBeanBuilder.build();
-            return csvToBean.iterator();
-        } catch (IllegalStateException e) {
-            throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
+    public String findExtenstionTypeOfFile(String pathValue) {
+        int index = pathValue.lastIndexOf('.');
+        String extension = null;
+        if( index > 0) {
+            extension = pathValue.substring(index + 1);
+            System.out.println("File extension is " + extension);
         }
+        return extension;
     }
 
     private <E> int getCount(Iterator<E> iterator) {
