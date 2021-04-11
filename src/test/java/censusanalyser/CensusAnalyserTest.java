@@ -14,7 +14,7 @@ public class CensusAnalyserTest {
     private static final String STATE_CODE_DATA_FILE_PATH = "./src/test/resources/IndiaStateCode.csv";
 
     @Test
-    public void givenIndianCensusCSVFileReturnsCorrectRecords() throws CensusAnalyserException {
+    public void givenIndianCensusCSVFile_ReturnsCorrectRecords() throws CensusAnalyserException  {
             CensusAnalyser censusAnalyser = new CensusAnalyser();
             int numOfRecords = censusAnalyser.loadIndiaCensusData(INDIA_CENSUS_CSV_FILE_PATH);
             Assert.assertEquals(29,numOfRecords);
