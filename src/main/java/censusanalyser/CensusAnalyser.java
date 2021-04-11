@@ -13,15 +13,12 @@ import java.util.stream.StreamSupport;
 public class CensusAnalyser {
     public int loadIndiaCensusData(String filePath) throws CensusAnalyserException {
         String extension = findExtenstionTypeOfFile(filePath);
-
-        int numberOfEnteries = 0;
+        int numberOfEnteries;
         try {
                 if (extension.equalsIgnoreCase("csv")) {
                     Reader reader = Files.newBufferedReader(Paths.get(filePath));
                     Iterator<IndiaCensusCSV> indiaCensusCSVIterator = this.getCSVFileIterator(reader,IndiaCensusCSV.class);
-                    Iterable<IndiaCensusCSV> csvIterator = () -> indiaCensusCSVIterator;
-                    numberOfEnteries = (int) StreamSupport.stream(csvIterator.spliterator(),false).count();
-
+                    numberOfEnteries = this.getCount(indiaCensusCSVIterator);
                 } else {
                     throw new CensusAnalyserException("Invalid Extension type of file", CensusAnalyserException
                                                                                             .ExceptionType.INVALID_FILE_EXTENSION);
@@ -53,8 +50,7 @@ public class CensusAnalyser {
             if (extension.equalsIgnoreCase("csv")) {
                 Reader reader = Files.newBufferedReader(Paths.get(filePath));
                 Iterator<StateCodeCSV> stateCSVIterator = this.getCSVFileIterator(reader,StateCodeCSV.class);
-                Iterable<StateCodeCSV> csvIterator = ()->stateCSVIterator;
-                numberOfEnteries = (int) StreamSupport.stream(csvIterator.spliterator(),false).count();
+                numberOfEnteries = this.getCount(stateCSVIterator);
             } else {
                 throw new CensusAnalyserException("Invalid extension type of file",CensusAnalyserException
                                                                                         .ExceptionType.INVALID_FILE_EXTENSION);
@@ -79,5 +75,11 @@ public class CensusAnalyser {
         } catch (IllegalStateException e) {
             throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
         }
+    }
+
+    private <E> int getCount(Iterator<E> iterator) {
+        Iterable<E> csvIterator = () -> iterator;
+        int numberOfEnteries = (int) StreamSupport.stream(csvIterator.spliterator(),false).count();
+        return numberOfEnteries;
     }
 }
