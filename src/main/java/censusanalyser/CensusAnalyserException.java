@@ -3,7 +3,7 @@ package censusanalyser;
 public class CensusAnalyserException extends Exception {
 
    enum ExceptionType {
-        RECORD_COUNT_NOT_MATCH,CENSUS_FILE_PROBLEM,INVALID_FILE_EXTENSION,INVALID_DELIMETER_OR_HEADER,NO_DATA_PRESENT;
+        RECORD_COUNT_NOT_MATCH,CENSUS_FILE_PROBLEM,INVALID_FILE_EXTENSION,INVALID_DELIMETER_OR_HEADER_OR_FILE_EMPTY;
    }
 
     public CensusAnalyserException(String message, String name) {
