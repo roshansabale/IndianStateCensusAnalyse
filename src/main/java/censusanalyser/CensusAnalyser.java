@@ -96,8 +96,15 @@ public class CensusAnalyser {
             return sortedStateCode;
     }
 
-    public String getSortedCensusDataByMostPopulation(){
+    public String getSortedCensusDataByMostPopulationState(){
         Comparator<IndiaCensusCSV> censusComparator = Comparator.comparing(census -> census.population);
+        censusCSVList = this.censusCSVList.stream().sorted(censusComparator.reversed()).collect(Collectors.toList());
+        String sortedState = new Gson().toJson(censusCSVList);
+        return sortedState;
+    }
+
+    public String getSortedCensusDataByMostDensityState(){
+        Comparator<IndiaCensusCSV> censusComparator = Comparator.comparing(census -> census.densityPerSqKm);
         censusCSVList = this.censusCSVList.stream().sorted(censusComparator.reversed()).collect(Collectors.toList());
         String sortedState = new Gson().toJson(censusCSVList);
         return sortedState;
