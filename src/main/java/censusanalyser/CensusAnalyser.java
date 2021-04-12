@@ -109,4 +109,11 @@ public class CensusAnalyser {
         String sortedState = new Gson().toJson(censusCSVList);
         return sortedState;
     }
+
+    public String getSortedCensusDataByLargestAreaState(){
+        Comparator<IndiaCensusCSV> censusComparator = Comparator.comparing(census -> census.areaInSqKm);
+        censusCSVList = this.censusCSVList.stream().sorted(censusComparator.reversed()).collect(Collectors.toList());
+        String sortedState = new Gson().toJson(censusCSVList);
+        return sortedState;
+    }
 }
