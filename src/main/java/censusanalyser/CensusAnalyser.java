@@ -95,4 +95,11 @@ public class CensusAnalyser {
             String sortedStateCode = new Gson().toJson(stateCSVList);
             return sortedStateCode;
     }
+
+    public String getSortedCensusDataByMostPopulation(){
+        Comparator<IndiaCensusCSV> censusComparator = Comparator.comparing(census -> census.population);
+        censusCSVList = this.censusCSVList.stream().sorted(censusComparator.reversed()).collect(Collectors.toList());
+        String sortedState = new Gson().toJson(censusCSVList);
+        return sortedState;
+    }
 }
