@@ -1,8 +1,12 @@
 package censusanalyser;
 
+import com.bridgelabz.CSVBuilderException;
+import com.google.gson.Gson;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import java.io.IOException;
 
 public class CensusAnalyserTest {
 
@@ -121,5 +125,15 @@ public class CensusAnalyserTest {
         } catch (CensusAnalyserException e) {
             Assert.assertEquals(CensusAnalyserException.ExceptionType.INVALID_DELIMETER_OR_HEADER,e.type);
         }
+    }
+
+    @Test
+    public void givenIndianCensusData_WhenSortedOnState_ShouldReturnSortedResult()
+            throws IOException, CensusAnalyserException, CSVBuilderException {
+        CensusAnalyser analyser = new CensusAnalyser();
+        analyser.loadIndiaCensusData(INDIA_CENSUS_CSV_FILE_PATH);
+        String sortedCensusData = analyser.getSortedCensusDataByStateName();
+        IndiaCensusCSV[] censusCSV = new Gson().fromJson(sortedCensusData, IndiaCensusCSV[].class);
+        Assert.assertEquals("Andhra Pradesh", censusCSV[0].state);
     }
 }
