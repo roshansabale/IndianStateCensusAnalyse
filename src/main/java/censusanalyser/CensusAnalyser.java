@@ -7,14 +7,21 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 
 public class CensusAnalyser {
-    List<IndiaCensusCSV> censusCSVList = null;
-    List<StateCodeCSV> stateCSVList = null;
+    List<IndiaCensusCSVDAO> censusList = null;
+    List<IndiaCensusCSVDAO> stateList = null;
+
+    public CensusAnalyser() {
+        this.censusList = new ArrayList<IndiaCensusCSVDAO> ();
+        this.stateList = new ArrayList<IndiaCensusCSVDAO>();
+    }
 
     public int loadIndiaCensusData(String filePath) throws CensusAnalyserException {
         String extension = findExtenstionTypeOfFile(filePath);
@@ -22,9 +29,13 @@ public class CensusAnalyser {
         try {
             if (extension.equalsIgnoreCase("csv")) {
                 Reader reader = Files.newBufferedReader(Paths.get(filePath));
-                ICSVBuilder<IndiaCensusCSV> csvBuilder = CSVBuilderFactory.createCSVBuilder();
-                censusCSVList = csvBuilder.getCSVFileList(reader, IndiaCensusCSV.class);
-                numberOfEnteries = this.getCount(censusCSVList);
+                ICSVBuilder csvBuilder = CSVBuilderFactory.createCSVBuilder();
+                Iterator<IndiaCensusCSV> csvFileIterator = csvBuilder.getCSVFileIterator(reader, IndiaCensusCSV.class);
+                while(csvFileIterator.hasNext()) {
+                   this.censusList.add(new IndiaCensusCSVDAO(csvFileIterator.next()));
+                }
+
+                numberOfEnteries = this.getCount(censusList);
             } else {
                 throw new CensusAnalyserException("Invalid Extension type of file", CensusAnalyserException
                                                             .ExceptionType.INVALID_FILE_EXTENSION);
@@ -46,11 +57,14 @@ public class CensusAnalyser {
 
         int numberOfEnteries;
         try {
-            if (extension.equalsIgnoreCase("csv") && (censusCSVList == null || censusCSVList.size() == 0)) {
+            if (extension.equalsIgnoreCase("csv") && (censusList == null || censusList.size() == 0)) {
                 Reader reader = Files.newBufferedReader(Paths.get(filePath));
-                ICSVBuilder<StateCodeCSV> csvBuilder = CSVBuilderFactory.createCSVBuilder();
-                stateCSVList = csvBuilder.getCSVFileList(reader, StateCodeCSV.class);
-                numberOfEnteries = this.getCount(stateCSVList);
+                ICSVBuilder csvBuilder = CSVBuilderFactory.createCSVBuilder();
+                Iterator<StateCodeCSV> csvFileIterator = csvBuilder.getCSVFileIterator(reader, StateCodeCSV.class);
+                while(csvFileIterator.hasNext()) {
+                    this.stateList.add(new IndiaCensusCSVDAO(csvFileIterator.next()));
+                }
+                numberOfEnteries = this.getCount(stateList);
             } else {
                 throw new CensusAnalyserException("Invalid extension type of file", CensusAnalyserException
                                                              .ExceptionType.INVALID_FILE_EXTENSION);
@@ -83,37 +97,37 @@ public class CensusAnalyser {
     }
 
     public String getSortedCensusDataByStateName() {
-            Comparator<IndiaCensusCSV> censusComparator = Comparator.comparing(census -> census.state);
-            censusCSVList = this.censusCSVList.stream().sorted(censusComparator).collect(Collectors.toList());
-            String sortedState = new Gson().toJson(censusCSVList);
+            Comparator<IndiaCensusCSVDAO> censusComparator = Comparator.comparing(census -> census.state);
+            censusList = this.censusList.stream().sorted(censusComparator).collect(Collectors.toList());
+            String sortedState = new Gson().toJson(censusList);
             return sortedState;
     }
 
     public String getSortedCensusDataByStateCode(){
-            Comparator<StateCodeCSV> censusComparator = Comparator.comparing(census -> census.stateCode);
-            stateCSVList = this.stateCSVList.stream().sorted(censusComparator).collect(Collectors.toList());
-            String sortedStateCode = new Gson().toJson(stateCSVList);
+            Comparator<IndiaCensusCSVDAO> censusComparator = Comparator.comparing(census -> census.stateCode);
+            stateList = this.stateList.stream().sorted(censusComparator).collect(Collectors.toList());
+            String sortedStateCode = new Gson().toJson(stateList);
             return sortedStateCode;
     }
 
     public String getSortedCensusDataByMostPopulationState(){
-        Comparator<IndiaCensusCSV> censusComparator = Comparator.comparing(census -> census.population);
-        censusCSVList = this.censusCSVList.stream().sorted(censusComparator.reversed()).collect(Collectors.toList());
-        String sortedState = new Gson().toJson(censusCSVList);
+        Comparator<IndiaCensusCSVDAO> censusComparator = Comparator.comparing(census -> census.population);
+        censusList = this.censusList.stream().sorted(censusComparator.reversed()).collect(Collectors.toList());
+        String sortedState = new Gson().toJson(censusList);
         return sortedState;
     }
 
     public String getSortedCensusDataByMostDensityState(){
-        Comparator<IndiaCensusCSV> censusComparator = Comparator.comparing(census -> census.densityPerSqKm);
-        censusCSVList = this.censusCSVList.stream().sorted(censusComparator.reversed()).collect(Collectors.toList());
-        String sortedState = new Gson().toJson(censusCSVList);
+        Comparator<IndiaCensusCSVDAO> censusComparator = Comparator.comparing(census -> census.densityPerSqKm);
+        censusList = this.censusList.stream().sorted(censusComparator.reversed()).collect(Collectors.toList());
+        String sortedState = new Gson().toJson(censusList);
         return sortedState;
     }
 
     public String getSortedCensusDataByLargestAreaState(){
-        Comparator<IndiaCensusCSV> censusComparator = Comparator.comparing(census -> census.areaInSqKm);
-        censusCSVList = this.censusCSVList.stream().sorted(censusComparator.reversed()).collect(Collectors.toList());
-        String sortedState = new Gson().toJson(censusCSVList);
+        Comparator<IndiaCensusCSVDAO> censusComparator = Comparator.comparing(census -> census.areaInSqKm);
+        censusList = this.censusList.stream().sorted(censusComparator.reversed()).collect(Collectors.toList());
+        String sortedState = new Gson().toJson(censusList);
         return sortedState;
     }
 }
