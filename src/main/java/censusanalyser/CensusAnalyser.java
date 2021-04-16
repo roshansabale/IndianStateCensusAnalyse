@@ -15,7 +15,10 @@ import java.util.stream.StreamSupport;
 public class CensusAnalyser {
     List<IndiaCensusCSVDAO> censusList = null;
     List<StateCodeCSV> stateList = null;
+    List<IndiaCensusCSVDAO> usList = null;
     Map<String, IndiaCensusCSVDAO> censusStateMap = new HashMap<>();
+    Map<String, IndiaCensusCSVDAO> usStateMap = new HashMap<>();
+
     public CensusAnalyser() {
         this.censusList = new ArrayList<IndiaCensusCSVDAO> ();
     }
@@ -33,17 +36,8 @@ public class CensusAnalyser {
                         .forEach(censusCSV -> censusStateMap.put(censusCSV.state, new IndiaCensusCSVDAO(censusCSV)));
                 System.out.println(censusStateMap);
                 int count = censusStateMap.size();
-                /*while (csvFileIterator.hasNext()) {
-                    count++;
-                    IndiaCensusCSV censusCSV = csvFileIterator.next();
-                    IndiaCensusCSVDAO indiaCensusCSVDAO = censusStateMap.get(censusCSV.state);
-                    if (indiaCensusCSVDAO == null) indiaCensusCSVDAO = new IndiaCensusCSVDAO(censusCSV);
-                    *//*indiaCensusCSVDAO.stateCode = censusCSV.state;*//*
-                    censusStateMap.put(censusCSV.state,indiaCensusCSVDAO);
-
-                }*/
                 System.out.println(censusStateMap);
-                numberOfEnteries = count; //this.getCount(censusList);
+                numberOfEnteries = count;
             } else {
                 throw new CensusAnalyserException("Invalid Extension type of file", CensusAnalyserException
                                                             .ExceptionType.INVALID_FILE_EXTENSION);
@@ -71,8 +65,9 @@ public class CensusAnalyser {
                 Iterator<StateCodeCSV> csvFileIterator = csvBuilder.getCSVFileIterator(reader, StateCodeCSV.class);
                 Iterable<StateCodeCSV> codeCSVIterable = () -> csvFileIterator;
                 StreamSupport.stream(codeCSVIterable.spliterator(), false)
-                        .filter(csvState -> censusStateMap.get(csvState.stateName) != null)
-                        .forEach(csvState -> censusStateMap.get(csvState.stateName).stateCode = csvState.stateCode);
+                                            .filter(csvState -> censusStateMap.get(csvState.stateName) != null)
+                                            .forEach(csvState -> censusStateMap.get(csvState.stateName)
+                                            .stateCode = csvState.stateCode);
                 System.out.println(censusStateMap+"\n"+censusStateMap.size());
                 count = censusStateMap.size();
             } else {
@@ -89,6 +84,38 @@ public class CensusAnalyser {
             throw new CensusAnalyserException(e.getMessage(), e.type.name());
         }
         return count;
+    }
+
+    public int loadUSCensusData(String filePath) throws CensusAnalyserException {
+        String extension = findExtenstionTypeOfFile(filePath);
+        int numberOfEnteries;
+        try {
+            if (extension.equalsIgnoreCase("csv")) {
+                Reader reader = Files.newBufferedReader(Paths.get(filePath));
+                ICSVBuilder csvBuilder = CSVBuilderFactory.createCSVBuilder();
+                Iterator<USCensusCSV> usCensusCSVIterator = csvBuilder.getCSVFileIterator(reader, USCensusCSV.class);
+                Iterable<USCensusCSV> usCensusCSVIterable = () -> usCensusCSVIterator;
+                StreamSupport.stream(usCensusCSVIterable.spliterator(), false)
+                        .map(USCensusCSV.class::cast)
+                        .forEach(usCensusCSV -> usStateMap.put(usCensusCSV.state, new IndiaCensusCSVDAO(usCensusCSV)));
+                int count = usStateMap.size();
+                System.out.println(usStateMap);
+                numberOfEnteries = count;
+            } else {
+                throw new CensusAnalyserException("Invalid Extension type of file", CensusAnalyserException
+                        .ExceptionType.INVALID_FILE_EXTENSION);
+            }
+        } catch (IOException e) {
+            throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException
+                    .ExceptionType.CENSUS_FILE_PROBLEM);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            throw new CensusAnalyserException("Invalid Header or delimeter", CensusAnalyserException
+                    .ExceptionType.INVALID_DELIMETER_OR_HEADER_OR_FILE_EMPTY);
+        } catch (CSVBuilderException e) {
+            throw new CensusAnalyserException(e.getMessage(), e.type.name());
+        }
+        return numberOfEnteries;
     }
 
     public String findExtenstionTypeOfFile(String pathValue) {
@@ -131,7 +158,11 @@ public class CensusAnalyser {
     }
 
     public String getSortedJsonString(Comparator<IndiaCensusCSVDAO> censusComparator) {
-        ArrayList sortedList = this.censusStateMap.values().stream().sorted(censusComparator).collect(Collectors.toCollection(ArrayList::new));
+        ArrayList sortedList = this.censusStateMap
+                                        .values()
+                                        .stream()
+                                        .sorted(censusComparator)
+                                        .collect(Collectors.toCollection(ArrayList::new));
         String sortedState = new Gson().toJson(sortedList);
         System.out.println(sortedList);
         return sortedState;
