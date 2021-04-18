@@ -19,7 +19,6 @@ public class CensusAnalyser {
     List<IndiaCensusCSVDAO> usList = null;
     Map<String, IndiaCensusCSVDAO> censusStateMap = new HashMap<>();
     Map<String, IndiaCensusCSVDAO> usStateMap = new HashMap<>();
-
     public CensusAnalyser() {
         this.censusList = new ArrayList<IndiaCensusCSVDAO> ();
         this.usList = new ArrayList<IndiaCensusCSVDAO>();
@@ -97,12 +96,10 @@ public class CensusAnalyser {
                 ICSVBuilder csvBuilder = CSVBuilderFactory.createCSVBuilder();
                 Iterator<USCensusCSV> usCensusCSVIterator = csvBuilder.getCSVFileIterator(reader, USCensusCSV.class);
                 Iterable<USCensusCSV> usCensusCSVIterable = () -> usCensusCSVIterator;
-               /* StreamSupport.stream(usCensusCSVIterable.spliterator(), false)
-                        .map(USCensusCSV.class::cast)
-                        .forEach(csvCensus -> censusStateMap.put(csvCensus.state, new IndiaCensusCSVDAO(csvCensus)));*/
                 StreamSupport.stream(usCensusCSVIterable.spliterator(), false)
                         .map(USCensusCSV.class::cast)
                         .forEach(censusCSV -> usStateMap.put(censusCSV.state, new IndiaCensusCSVDAO(censusCSV)));
+
                 System.out.println(usStateMap+"\n\n"+usStateMap.size());
                 numberOfEnteries = usStateMap.size();
             } else {
