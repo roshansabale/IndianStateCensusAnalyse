@@ -1,5 +1,6 @@
 package censusanalyser;
 
+import com.bridgelabz.CSVBuilderException;
 import com.google.gson.Gson;
 import org.junit.Assert;
 import org.junit.Test;
@@ -200,6 +201,28 @@ public class CensusAnalyserTest {
         USCensusCSV[] censusCSVS = new Gson().fromJson(sortedState, USCensusCSV[].class);
         System.out.println(censusCSVS[0].population);
         Assert.assertEquals(37253956,censusCSVS[0].population);
+    }
+
+    @Test
+    public void givenUSCensusData_WhenSortedOnMostDensity_ShouldReturnSortedResult()
+                                                                    throws CensusAnalyserException {
+        CensusAnalyser censusAnalyser = new CensusAnalyser();
+        censusAnalyser.loadUSCensusData(US_CENSUS_CSV_FILE_PATH);
+        String sortedState = censusAnalyser.getSortedCensusDataByMostDensityState("us");
+        USCensusCSV[] censusCSVS = new Gson().fromJson(sortedState, USCensusCSV[].class);
+        System.out.println(censusCSVS[0].state);
+        Assert.assertEquals("District of Columbia",censusCSVS[0].state);
+    }
+
+    @Test
+    public void givenUSCensusData_WhenSortedOnLargestArea_ShouldReturnSortedResult()
+            throws CensusAnalyserException {
+        CensusAnalyser censusAnalyser = new CensusAnalyser();
+        censusAnalyser.loadUSCensusData(US_CENSUS_CSV_FILE_PATH);
+        String sortedState = censusAnalyser.getSortedCensusDataByLargestAreaState("us");
+        USCensusCSV[] censusCSVS = new Gson().fromJson(sortedState, USCensusCSV[].class);
+        System.out.println(censusCSVS[0].state);
+        Assert.assertEquals("Alaska",censusCSVS[0].state);
     }
 
 }
