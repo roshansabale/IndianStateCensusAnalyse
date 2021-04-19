@@ -16,7 +16,6 @@ import java.util.stream.StreamSupport;
 
 public abstract class CensusAdapter implements ICensusAdapter{
     Map<String, IndiaCensusCSVDAO> censusMap = new HashMap<>();
-
     public <E> Map<String, IndiaCensusCSVDAO> loadCensusData(Class<E> censusCSVClass,String... filePath) throws CensusAnalyserException {
         String extension = CensusAnalyser.findExtenstionTypeOfFile(filePath[0]);
         try {
@@ -32,7 +31,6 @@ public abstract class CensusAdapter implements ICensusAdapter{
                         StreamSupport.stream(indiaCensusCSVIterable.spliterator(), false)
                                 .map(IndiaCensusCSV.class::cast)
                                 .forEach(censusCSV -> censusMap.put(censusCSV.state, new IndiaCensusCSVDAO(censusCSV)));
-                        System.out.println(censusMap);
 
                         if (filePath.length == 2) {
                             try (Reader codeReader = Files.newBufferedReader(Paths.get(filePath[1]))) {
@@ -43,7 +41,6 @@ public abstract class CensusAdapter implements ICensusAdapter{
                                         .filter(csvState -> censusMap.get(csvState.stateName) != null)
                                         .forEach(csvState -> censusMap.get(csvState.stateName).stateCode = csvState.stateCode);
                             }
-                            System.out.println(censusMap);
                         }
                         break;
                     case "censusanalyser.USCensusCSV":

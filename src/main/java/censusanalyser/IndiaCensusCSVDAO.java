@@ -1,6 +1,14 @@
 package censusanalyser;
 
 public class IndiaCensusCSVDAO {
+    public double getDensityPerSqKm() {
+        return densityPerSqKm;
+    }
+
+    public int getPopulation() {
+        return population;
+    }
+
     public  double densityPerSqKm;
     public  int population;
     public  double areaInSqKm;
