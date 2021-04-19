@@ -201,4 +201,11 @@ public class CensusAnalyserTest {
         System.out.println(censusCSVS[0].state);
         Assert.assertEquals("Alaska",censusCSVS[0].state);
     }
+
+    @Test
+    public void sample() throws CensusAnalyserException {
+        CensusAnalyser censusAnalyser = new CensusAnalyser(CensusAnalyser.Country.INDIA);
+        String mostPopulaousAndDensityStateFromUsAndInd = censusAnalyser.getMostPopulaousAndDensityStateFromUsAndInd(INDIA_CENSUS_CSV_FILE_PATH, US_CENSUS_CSV_FILE_PATH);
+        Assert.assertEquals("Uttar Pradesh",mostPopulaousAndDensityStateFromUsAndInd);
+    }
 }
